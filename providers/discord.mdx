@@ -71,9 +71,12 @@ You need a Discord account to create applications in the [Discord Developer Port
 
   <Step title="Save Credentials">
     Choose where to save your credentials:
-    - **Environment variables** - Creates/updates `.env` file
-    - **Copy to clipboard** - Copies as `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET`
-    - **Display in terminal** - Shows credentials in the console
+    - `.env` - Save to `.env` file in your project root
+    - `.env.local` - Save to `.env.local` file (ideal for Next.js projects)
+    - `.json` - Save to `discord-credentials.json` file
+    - `print to the console` - Display credentials in terminal without saving
+    
+    See [Save Options](/usage/save-options) for detailed information about each format.
   </Step>
 </Steps>
 
@@ -125,27 +128,25 @@ If your application also includes a bot:
 2. Configure bot permissions and settings
 3. Note that OAuth credentials are separate from bot tokens
 
-## Example Usage
+## CLI Options
 
-Basic setup:
+When running OAuth Init, you can use various flags to customize behavior:
+
 ```bash
-oauth-init discord
+# Standard interactive setup
+oauth-init
+
+# Skip browser opening (get URLs in console)
+oauth-init --no-open
+
+# Quiet mode (minimal output)
+oauth-init --quiet
+
+# Combine flags
+oauth-init --quiet --no-open
 ```
 
-With callback URL:
-```bash
-oauth-init discord --callback https://example.com/auth/discord/callback
-```
-
-Skip browser opening:
-```bash
-oauth-init discord --no-open
-```
-
-Quiet mode:
-```bash
-oauth-init discord --quiet
-```
+See [CLI Options](/usage/cli-options) for all available flags.
 
 ## Common Issues
 

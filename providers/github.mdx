@@ -7,7 +7,7 @@ GitHub OAuth setup offers two approaches: GitHub App with automated setup, or tr
 
 ## Setup Options
 
-When you run `oauth-init github`, you'll choose between:
+When you run `oauth-init` and select GitHub, you'll choose between:
 
 - **GitHub App (One click setup)** - Automated setup using GitHub's app manifest flow
 - **OAuth App (Manual setup)** - Traditional OAuth app requiring form completion
@@ -23,9 +23,10 @@ The GitHub App flow uses GitHub's app manifest API for automated credential gene
 
   <Step title="Choose Save Option">
     Select where to save credentials before the app is created:
-    - Environment variables (`.env` file)
-    - Copy to clipboard
-    - Display in terminal
+    - `.env` - Save to `.env` file
+    - `.env.local` - Save to `.env.local` file
+    - `.json` - Save to JSON file
+    - `print to the console` - Display in terminal
   </Step>
 
   <Step title="Authorize in Browser">
@@ -119,9 +120,12 @@ The OAuth App flow requires manual form completion in GitHub's developer setting
 
   <Step title="Save Credentials">
     Choose where to save your credentials:
-    - **Environment variables** - Creates/updates `.env` file
-    - **Copy to clipboard** - Copies as `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
-    - **Display in terminal** - Shows credentials in the console
+    - `.env` - Save to `.env` file in your project root
+    - `.env.local` - Save to `.env.local` file (ideal for Next.js projects)
+    - `.json` - Save to `github-credentials.json` file
+    - `print to the console` - Display credentials in terminal without saving
+    
+    See [Save Options](/usage/save-options) for detailed information about each format.
   </Step>
 </Steps>
 
@@ -132,27 +136,25 @@ Unlike other providers, GitHub OAuth App setup does not enforce strict validatio
 - **OAuth Apps**: Start with `Iv1.` followed by 16 hexadecimal characters
 - **GitHub Apps**: Use numeric Client IDs
 
-## Example Usage
+## CLI Options
 
-Basic setup:
+When running OAuth Init, you can use various flags to customize behavior:
+
 ```bash
-oauth-init github
+# Standard interactive setup
+oauth-init
+
+# Skip browser opening (get URLs in console)
+oauth-init --no-open
+
+# Quiet mode (minimal output)
+oauth-init --quiet
+
+# Combine flags
+oauth-init --quiet --no-open
 ```
 
-With callback URL:
-```bash
-oauth-init github --callback http://localhost:3000/auth/callback
-```
-
-Skip browser opening:
-```bash
-oauth-init github --no-open
-```
-
-Quiet mode:
-```bash
-oauth-init github --quiet
-```
+See [CLI Options](/usage/cli-options) for all available flags.
 
 ## Comparison
 
