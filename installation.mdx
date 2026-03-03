@@ -1,0 +1,255 @@
+---
+title: Installation
+description: Install OAuth Init globally using your preferred package manager
+---
+
+## Prerequisites
+
+Before installing OAuth Init, ensure you have one of the following package managers installed:
+
+- **Node.js** 18+ (for npm)
+- **Bun** 1.0+ (recommended for best performance)
+- **pnpm** 8+
+
+<Note>
+For Google OAuth setup, you'll also need the [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed and authenticated. This is not required for GitHub or Discord providers.
+</Note>
+
+## Install OAuth Init
+
+Choose your preferred package manager to install OAuth Init globally:
+
+<CodeGroup>
+
+```bash npm
+npm install -g oauth-init
+```
+
+```bash bun
+bun install -g oauth-init
+```
+
+```bash pnpm
+pnpm install -g oauth-init
+```
+
+</CodeGroup>
+
+The `-g` flag installs the CLI globally, making the `oauth-init` command available from anywhere in your terminal.
+
+## Verify Installation
+
+Confirm that OAuth Init was installed successfully by running:
+
+```bash
+oauth-init --help
+```
+
+You should see the help output:
+
+```
+Usage: oauth-init [options]
+
+Options:
+  -h, --help     Show this help message
+  -q, --quiet    Reduce output verbosity
+  -n, --no-open  Don't open browser URLs automatically
+
+Examples:
+  oauth-init              # Run interactive setup
+  oauth-init --quiet       # Run with minimal output
+  oauth-init --no-open     # Get URLs but don't open them
+```
+
+## Provider-Specific Setup
+
+### Google OAuth Requirements
+
+To set up Google OAuth, you need the gcloud CLI installed and authenticated:
+
+<Steps>
+  <Step title="Install gcloud CLI">
+    Download and install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) for your operating system
+  </Step>
+  
+  <Step title="Authenticate with Google Cloud">
+    Run the following command and complete the browser authentication flow:
+    
+    ```bash
+    gcloud auth login
+    ```
+  </Step>
+  
+  <Step title="Verify Authentication">
+    Check that you're authenticated by listing your active account:
+    
+    ```bash
+    gcloud auth list
+    ```
+    
+    You should see your Google account marked as ACTIVE:
+    
+    ```
+           Credentialed Accounts
+    ACTIVE  ACCOUNT
+    *       you@example.com
+    ```
+  </Step>
+</Steps>
+
+<Tip>
+OAuth Init will automatically check for gcloud CLI and authentication status when you select Google as a provider. If not authenticated, you'll receive clear instructions on what to do.
+</Tip>
+
+### GitHub OAuth Requirements
+
+No special setup required! OAuth Init will:
+- Open GitHub pages in your browser for authentication
+- Guide you through creating either a GitHub App or OAuth App
+- Automatically exchange credentials (for GitHub Apps)
+
+<Note>
+For GitHub App setup (one-click method), OAuth Init starts a temporary local server on port 3004 to receive the OAuth callback. Make sure this port is available.
+</Note>
+
+### Discord OAuth Requirements
+
+No special setup required! You just need:
+- A Discord account
+- Access to the [Discord Developer Portal](https://discord.com/developers/applications)
+
+OAuth Init will guide you through the entire application creation process.
+
+## CLI Flags
+
+OAuth Init supports several command-line flags to customize behavior:
+
+### `--help` or `-h`
+
+Display help information and exit:
+
+```bash
+oauth-init --help
+```
+
+### `--quiet` or `-q`
+
+Reduce output verbosity for minimal logging:
+
+```bash
+oauth-init --quiet
+```
+
+In quiet mode:
+- Step messages are suppressed
+- Info messages are hidden
+- Only critical prompts and errors are shown
+
+<Tip>
+Quiet mode is useful when you're familiar with the flow and want a more streamlined experience.
+</Tip>
+
+### `--no-open` or `-n`
+
+Prevent OAuth Init from automatically opening browser URLs:
+
+```bash
+oauth-init --no-open
+```
+
+Use this flag when:
+- Running in a headless environment
+- Using a remote server via SSH
+- Configuring OAuth in CI/CD pipelines
+- You prefer to manually copy and paste URLs
+
+<Warning>
+In `--no-open` mode, you'll need to manually copy the displayed URLs and open them in your browser.
+</Warning>
+
+## Update OAuth Init
+
+To update to the latest version of OAuth Init:
+
+<CodeGroup>
+
+```bash npm
+npm update -g oauth-init
+```
+
+```bash bun
+bun update -g oauth-init
+```
+
+```bash pnpm
+pnpm update -g oauth-init
+```
+
+</CodeGroup>
+
+## Uninstall
+
+If you need to uninstall OAuth Init:
+
+<CodeGroup>
+
+```bash npm
+npm uninstall -g oauth-init
+```
+
+```bash bun
+bun remove -g oauth-init
+```
+
+```bash pnpm
+pnpm remove -g oauth-init
+```
+
+</CodeGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Command not found after installation">
+    If `oauth-init` is not found after installation, ensure that your global package binaries are in your PATH:
+    
+    - For npm: Check that `npm config get prefix`/bin is in your PATH
+    - For bun: Ensure `~/.bun/bin` is in your PATH
+    - For pnpm: Check that pnpm's global bin directory is in your PATH
+    
+    You may need to restart your terminal or shell after installation.
+  </Accordion>
+  
+  <Accordion title="Permission errors during installation">
+    If you encounter permission errors with npm:
+    
+    ```bash
+    # Use sudo (not recommended)
+    sudo npm install -g oauth-init
+    
+    # Or configure npm to use a different directory (recommended)
+    npm config set prefix ~/.npm-global
+    export PATH=~/.npm-global/bin:$PATH
+    npm install -g oauth-init
+    ```
+    
+    Consider using [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager) to avoid permission issues.
+  </Accordion>
+  
+  <Accordion title="gcloud CLI not found">
+    If OAuth Init reports that gcloud CLI is not found:
+    
+    1. Install gcloud CLI from https://cloud.google.com/sdk/docs/install
+    2. Initialize it by running: `gcloud init`
+    3. Authenticate by running: `gcloud auth login`
+    4. Verify installation: `gcloud version`
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+Now that OAuth Init is installed, you're ready to configure your first OAuth provider:
+
+<Card title="Quickstart Tutorial" icon="rocket" href="/quickstart">
+  Follow our step-by-step guide to set up Google, GitHub, or Discord OAuth in minutes
+</Card>

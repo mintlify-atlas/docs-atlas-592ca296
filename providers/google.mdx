@@ -1,0 +1,136 @@
+---
+title: Google OAuth Setup
+description: Configure Google OAuth for your application using gcloud CLI
+---
+
+Google OAuth setup requires the gcloud CLI and involves creating an OAuth consent screen and client credentials through the Google Cloud Console.
+
+## Prerequisites
+
+<Warning>
+  The gcloud CLI must be installed and authenticated before setting up Google OAuth.
+</Warning>
+
+Install the gcloud CLI:
+```bash
+# Visit https://cloud.google.com/sdk/docs/install for installation instructions
+# Then authenticate:
+gcloud auth login
+```
+
+OAuth Init will automatically check for gcloud CLI installation and authentication status before proceeding.
+
+## Setup Process
+
+<Steps>
+  <Step title="Select Google Cloud Project">
+    OAuth Init fetches your Google Cloud projects using the gcloud CLI and displays them for selection.
+
+    The currently active project (from `gcloud config get-value project`) will be marked as "(Default)".
+
+    If no projects are found, create one at [Google Cloud Console](https://console.cloud.google.com).
+  </Step>
+
+  <Step title="Configure OAuth Consent Screen">
+    OAuth Init opens the OAuth consent screen configuration page:
+
+    ```
+    https://console.cloud.google.com/apis/credentials/consent?project=YOUR_PROJECT_ID
+    ```
+
+    <Note>
+      Google requires manual setup for personal projects.
+    </Note>
+
+    Complete these steps in the Google Cloud Console:
+    1. Choose **External** as the user type
+    2. Fill in the **App Name** and **User support email**
+    3. Click **Save and Continue** through all remaining screens
+
+    Press Enter in the CLI once you've saved the consent screen (or type 'skip' if configured previously).
+  </Step>
+
+  <Step title="Create OAuth Client ID">
+    OAuth Init opens the OAuth client creation page:
+
+    ```
+    https://console.cloud.google.com/apis/credentials/oauthclient?project=YOUR_PROJECT_ID
+    ```
+
+    Complete these steps:
+    1. Select **Web Application** as the application type
+    2. Add your **Redirect URIs** (your application's callback URLs)
+    3. Click **Create**
+
+    After creation, copy the Client ID and Client Secret from the modal that appears.
+  </Step>
+
+  <Step title="Enter Credentials">
+    Paste your credentials when prompted:
+
+    **Client ID:**
+    ```
+    12345-abcde.apps.googleusercontent.com
+    ```
+
+    **Client Secret:**
+    ```
+    GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxxx
+    ```
+
+    <Note>
+      The Client ID must contain `.apps.googleusercontent.com` to be valid.
+    </Note>
+  </Step>
+
+  <Step title="Save Credentials">
+    Choose where to save your credentials:
+    - **Environment variables** - Creates/updates `.env` file
+    - **Copy to clipboard** - Copies as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
+    - **Display in terminal** - Shows credentials in the console
+  </Step>
+</Steps>
+
+## Validation Rules
+
+OAuth Init validates the Google Client ID format:
+
+```typescript
+validate: (value) =>
+  value?.includes(".apps.googleusercontent.com")
+    ? undefined
+    : "Invalid format"
+```
+
+The Client ID must contain `.apps.googleusercontent.com` to pass validation.
+
+## Automated Checks
+
+OAuth Init performs the following checks:
+
+1. **gcloud CLI Installation** - Verifies `gcloud version` command succeeds
+2. **Authentication Status** - Checks for active authenticated accounts using:
+   ```bash
+   gcloud auth list --format=value(account) --filter=status:ACTIVE
+   ```
+3. **Project Access** - Fetches available projects to ensure proper access
+
+If any check fails, the setup process will exit with an error message and instructions.
+
+## Example Usage
+
+```bash
+oauth-init google
+```
+
+To skip opening browser windows automatically:
+
+```bash
+oauth-init google --no-open
+```
+
+To suppress progress messages:
+
+```bash
+oauth-init google --quiet
+```

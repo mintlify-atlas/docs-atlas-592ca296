@@ -1,0 +1,143 @@
+---
+title: Auth Library Detection
+description: How OAuth Init automatically detects your authentication library and configures callback URLs
+---
+
+OAuth Init automatically detects popular authentication libraries in your project and configures the appropriate callback URL patterns for each OAuth provider.
+
+## Supported Libraries
+
+OAuth Init detects the following authentication libraries by scanning your `package.json`:
+
+| Library | Callback Pattern |
+|---------|------------------|
+| `next-auth` | `/api/auth/callback/[provider]` |
+| `@auth/core` | `/api/auth/callback/[provider]` |
+| `better-auth` | `/api/auth/callback/[provider]` |
+| `lucia` | `/auth/callback` |
+| `arctic` | `/auth/callback/[provider]` |
+| `iron-session` | `/api/auth/callback` |
+
+## How Detection Works
+
+OAuth Init reads your project's `package.json` and checks both `dependencies` and `devDependencies` for any of the supported authentication libraries.
+
+```typescript
+// Detection process:
+1. Read package.json from current directory
+2. Check dependencies and devDependencies
+3. Match against supported library names
+4. Return the first matching library found
+```
+
+## Callback URL Generation
+
+Once a library is detected, OAuth Init generates the appropriate callback URL for each OAuth provider you're setting up.
+
+### With Detected Library
+
+If OAuth Init detects a supported library, you'll see:
+
+```bash
+Detected auth library: next-auth
+Enter the Google OAuth callback URL:
+> http://localhost:3000/api/auth/callback/google
+```
+
+The `[provider]` placeholder in the callback pattern is automatically replaced with the specific provider name (e.g., `google`, `github`, `discord`).
+
+### Without Detected Library
+
+If no supported library is detected, OAuth Init uses a generic callback pattern:
+
+```bash
+No known auth library detected, using generic callback pattern
+Enter the Google OAuth callback URL:
+> http://localhost:3000/oauth/callback/google
+```
+
+The default generic pattern is `/oauth/callback/[provider]`.
+
+## Examples by Library
+
+### Next Auth / Auth.js
+
+```bash
+Detected auth library: next-auth
+```
+
+**Generated callbacks:**
+- Google: `http://localhost:3000/api/auth/callback/google`
+- GitHub: `http://localhost:3000/api/auth/callback/github`
+- Discord: `http://localhost:3000/api/auth/callback/discord`
+
+### Better Auth
+
+```bash
+Detected auth library: better-auth
+```
+
+**Generated callbacks:**
+- Google: `http://localhost:3000/api/auth/callback/google`
+- GitHub: `http://localhost:3000/api/auth/callback/github`
+- Discord: `http://localhost:3000/api/auth/callback/discord`
+
+### Lucia
+
+```bash
+Detected auth library: lucia
+```
+
+**Generated callbacks:**
+- Google: `http://localhost:3000/auth/callback`
+- GitHub: `http://localhost:3000/auth/callback`
+- Discord: `http://localhost:3000/auth/callback`
+
+<Note>
+Lucia uses a single callback endpoint for all providers, so the provider name is not included in the URL.
+</Note>
+
+### Arctic
+
+```bash
+Detected auth library: arctic
+```
+
+**Generated callbacks:**
+- Google: `http://localhost:3000/auth/callback/google`
+- GitHub: `http://localhost:3000/auth/callback/github`
+- Discord: `http://localhost:3000/auth/callback/discord`
+
+### Iron Session
+
+```bash
+Detected auth library: iron-session
+```
+
+**Generated callbacks:**
+- Google: `http://localhost:3000/api/auth/callback`
+- GitHub: `http://localhost:3000/api/auth/callback`
+- Discord: `http://localhost:3000/api/auth/callback`
+
+<Note>
+Iron Session uses a single callback endpoint for all providers.
+</Note>
+
+## Customizing Callback URLs
+
+While OAuth Init provides default callback URLs based on detected libraries, you can always customize them during the interactive setup:
+
+```bash
+Enter the Google OAuth callback URL:
+> http://localhost:3000/api/auth/callback/google
+```
+
+Simply edit the suggested URL to match your specific setup. This is useful when:
+- Using a different port than 3000
+- Deploying to a production domain
+- Using custom routing patterns
+- Running multiple environments (development, staging, production)
+
+## Manual Setup
+
+If you're not using any of the supported libraries, OAuth Init will still work perfectly. You'll just need to manually specify the callback URLs that match your custom authentication implementation.

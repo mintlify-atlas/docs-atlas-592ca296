@@ -1,0 +1,107 @@
+---
+title: CLI Options
+description: Command-line flags and options available in OAuth Init
+---
+
+OAuth Init supports several command-line flags to customize its behavior. All flags have both short and long forms for convenience.
+
+## Available Flags
+
+### Help Flag
+
+Display usage information and available options.
+
+```bash
+oauth-init --help
+oauth-init -h
+```
+
+**Output:**
+```
+Usage: oauth-init [options]
+
+Options:
+  -h, --help     Show this help message
+  -q, --quiet    Reduce output verbosity
+  -n, --no-open  Don't open browser URLs automatically
+
+Examples:
+  oauth-init              # Run interactive setup
+  oauth-init --quiet       # Run with minimal output
+  oauth-init --no-open     # Get URLs but don't open them
+```
+
+### Quiet Mode
+
+Reduce output verbosity for minimal console output.
+
+```bash
+oauth-init --quiet
+oauth-init -q
+```
+
+**Use cases:**
+- CI/CD pipelines where minimal output is preferred
+- Automated scripts where you only want essential information
+- Environments with limited console space
+
+### No Open Flag
+
+Prevent automatic browser opening for OAuth URLs.
+
+```bash
+oauth-init --no-open
+oauth-init -n
+```
+
+**Use cases:**
+- Headless environments without a browser
+- Remote SSH sessions
+- Docker containers
+- When you prefer to manually copy and paste URLs
+
+## Combining Flags
+
+You can combine multiple flags in a single command:
+
+```bash
+# Run in quiet mode without opening browser
+oauth-init --quiet --no-open
+
+# Using short form
+oauth-init -q -n
+```
+
+## Examples
+
+### Standard Interactive Setup
+
+```bash
+oauth-init
+```
+
+Runs the full interactive setup with normal output and automatic browser opening.
+
+### Minimal Output Setup
+
+```bash
+oauth-init --quiet
+```
+
+Runs the setup with reduced console output, showing only essential information.
+
+### Manual URL Setup
+
+```bash
+oauth-init --no-open
+```
+
+Provides OAuth URLs in the console without automatically opening them in your browser. Useful for remote environments or when you want more control over the process.
+
+### CI/CD Environment
+
+```bash
+oauth-init -q -n
+```
+
+Combines quiet mode and no-open flags for automated environments where you don't want verbose output or browser interactions.

@@ -1,80 +1,252 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Get up and running with OAuth Init in under 5 minutes
 ---
 
-## Get started in three steps
+This guide walks you through your first OAuth provider setup using OAuth Init.
 
-Get your documentation site running locally and make your first customization.
+## Prerequisites
 
-### Step 1: Set up your local environment
+Before you begin, ensure you have:
+- Node.js 16+ or Bun installed
+- OAuth Init installed globally (see [Installation](/installation))
+- For Google OAuth: gcloud CLI installed and authenticated
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+## Your first OAuth setup
 
-### Step 2: Deploy your changes
+Let's set up Google OAuth for a Next.js application.
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+<Steps>
+  <Step title="Run OAuth Init">
+    Start the interactive CLI in your project directory:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    ```bash
+    oauth-init
+    ```
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+    You'll see the OAuth Init banner and be prompted for your project name:
 
-### Step 3: Go live
+    ```
+      ▗▄▖  ▗▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▖    ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖
+     ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌  █  ▐▌ ▐▌      █  ▐▛▚▖▐▌  █    █
+     ▐▌ ▐▌▐▛▀▜▌▐▌ ▐▌  █  ▐▛▀▜▌      █  ▐▌ ▝▜▌  █    █
+     ▝▚▄▞▘▐▌ ▐▌▝▚▄▞▘  █  ▐▌ ▐▌    ▗▄█▄▖▐▌  ▐▌▗▄█▄▖  █
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+    ┌  Enter the name of your project:
+    │  my-app
+    └
+    ```
+  </Step>
+
+  <Step title="Select OAuth providers">
+    Choose which OAuth providers you want to set up. For this guide, select **Google**:
+
+    ```
+    ◆  Select OAuth services to setup:
+    │  ◻ Google
+    │  ◻ Github
+    │  ◻ Discord
+    └
+    ```
+
+    Use arrow keys to navigate and Space to select. Press Enter when done.
+  </Step>
+
+  <Step title="Configure callback URL">
+    OAuth Init automatically detects your auth library and suggests a callback URL:
+
+    ```
+    ◇  Detected auth library: next-auth
+    │
+    ┌  Enter the Google OAuth callback URL:
+    │  http://localhost:3000/api/auth/callback/google
+    └
+    ```
+
+    Press Enter to accept the default or type your custom callback URL.
+  </Step>
+
+  <Step title="Select Google Cloud project">
+    OAuth Init fetches your Google Cloud projects using gcloud CLI:
+
+    ```
+    ◇  Fetched Projects
+    │
+    ◆  Select your project
+    │  ○ my-production-app
+    │  ● my-dev-project (Default)
+    │  ○ another-project
+    └
+    ```
+
+    Your current gcloud project is marked as (Default).
+  </Step>
+
+  <Step title="Configure OAuth consent screen">
+    OAuth Init opens the Google Cloud Console consent screen page:
+
+    ```
+    ┌  Action Required
+    │
+    │  1. Choose 'External'
+    │  2. Fill App Name & Email
+    │  3. Click 'Save and Continue' through to the end.
+    │
+    └  https://console.cloud.google.com/apis/credentials/consent?project=my-dev-project
+
+    ┌  Press Enter once you've saved the Consent Screen
+    │  (or type 'skip' if done previously)
+    └
+    ```
+
+    Follow the instructions in the browser, then return to the terminal and press Enter.
+  </Step>
+
+  <Step title="Create OAuth client ID">
+    OAuth Init opens the credentials creation page:
+
+    ```
+    ┌  Action Required
+    │
+    │  1. Select 'Web Application'
+    │  2. Add your Redirect URIs
+    │  3. Click 'Create'
+    │
+    └  https://console.cloud.google.com/apis/credentials/oauthclient?project=my-dev-project
+
+    ┌  Paste your Client ID:
+    │  123456789-abcdefgh.apps.googleusercontent.com
+    └
+
+    ┌  Paste your Client Secret:
+    │  ********************************
+    └
+    ```
+
+    Copy the Client ID and Client Secret from the Google Cloud Console.
+  </Step>
+
+  <Step title="Save credentials">
+    Choose how to save your credentials:
+
+    ```
+    ◆  Where should we save your credentials?
+    │  ● .env
+    │  ○ .env.local
+    │  ○ JSON file
+    │  ○ Print to console
+    └
+
+    ◇  Credentials saved to .env
+    ```
+
+    Your `.env` file now contains:
+
+    ```bash .env
+    GOOGLE_CLIENT_ID=123456789-abcdefgh.apps.googleusercontent.com
+    GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxxxxxxxxxxxxxx
+    ```
+  </Step>
+</Steps>
+
+<Note>
+OAuth Init validates your input - for example, Google Client IDs must contain `.apps.googleusercontent.com`.
+</Note>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Set up more providers" icon="plug" href="/providers/github">
+    Add GitHub or Discord OAuth
+  </Card>
+  <Card title="Configure options" icon="sliders" href="/usage/cli-options">
+    Learn about CLI flags and options
+  </Card>
+  <Card title="Auth libraries" icon="book" href="/usage/auth-libraries">
+    See supported auth libraries
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/reference/troubleshooting">
+    Common issues and solutions
+  </Card>
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## Using with popular auth libraries
+
+<Tabs>
+  <Tab title="Next.js (next-auth)">
+    ```typescript app/api/auth/[...nextauth]/route.ts
+    import NextAuth from "next-auth";
+    import GoogleProvider from "next-auth/providers/google";
+
+    export const authOptions = {
+      providers: [
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID!,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        }),
+      ],
+    };
+
+    const handler = NextAuth(authOptions);
+    export { handler as GET, handler as POST };
+    ```
+  </Tab>
+
+  <Tab title="Better Auth">
+    ```typescript auth.ts
+    import { betterAuth } from "better-auth";
+
+    export const auth = betterAuth({
+      socialProviders: {
+        google: {
+          clientId: process.env.GOOGLE_CLIENT_ID!,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        },
+      },
+    });
+    ```
+  </Tab>
+
+  <Tab title="Lucia">
+    ```typescript auth.ts
+    import { lucia } from "lucia";
+    import { google } from "@lucia-auth/oauth/providers";
+
+    const googleAuth = google(auth, {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      redirectUri: "http://localhost:3000/auth/callback",
+    });
+    ```
+  </Tab>
+</Tabs>
+
+## Setting up multiple providers
+
+You can configure multiple OAuth providers in one session:
+
+```bash
+oauth-init
+```
+
+Select multiple providers using Space:
+
+```
+◆  Select OAuth services to setup:
+│  ◉ Google
+│  ◉ Github
+│  ◉ Discord
+└
+```
+
+OAuth Init will guide you through each provider sequentially.
+
+## Non-interactive mode
+
+For CI/CD environments or when you prefer manual browser control:
+
+```bash
+oauth-init --no-open --quiet
+```
+
+This displays URLs without opening your browser and reduces output verbosity.

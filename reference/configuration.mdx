@@ -1,0 +1,146 @@
+---
+title: Configuration
+description: Global configuration options and environment variables for OAuth Init CLI
+---
+
+## Command Line Flags
+
+OAuth Init supports the following command-line flags to customize its behavior:
+
+### `--quiet` / `-q`
+
+Reduce output verbosity. When enabled, most informational messages and step indicators will be suppressed.
+
+```bash
+oauth-init --quiet
+```
+
+This flag sets `globalConfig.quiet = true` and affects:
+- Step messages (`log.step`)
+- Info messages (`log.info`)
+- General messages (`log.message`)
+
+### `--no-open` / `-n`
+
+Prevent the CLI from automatically opening browser URLs. URLs will still be displayed in the terminal.
+
+```bash
+oauth-init --no-open
+```
+
+Useful for:
+- Remote SSH sessions
+- Headless environments
+- CI/CD pipelines
+- When you prefer to manually copy and paste URLs
+
+### `--help` / `-h`
+
+Display the help message with usage instructions.
+
+```bash
+oauth-init --help
+```
+
+## Combining Flags
+
+You can combine multiple flags:
+
+```bash
+oauth-init --quiet --no-open
+```
+
+## Global Configuration
+
+The CLI maintains a global configuration object defined in `src/lib/config.ts`:
+
+```typescript
+export const globalConfig = {
+  quiet: false,
+  noOpen: false,
+};
+```
+
+These values are set at runtime based on the command-line flags provided.
+
+## Environment Variables
+
+OAuth Init creates environment variables for storing credentials. The naming convention follows this pattern:
+
+### Google OAuth
+
+```bash
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+```
+
+### GitHub OAuth
+
+```bash
+GITHUB_CLIENT_ID=Iv1.xxxxxxxxxx
+GITHUB_CLIENT_SECRET=your-client-secret
+```
+
+### Discord OAuth
+
+```bash
+DISCORD_CLIENT_ID=123456789012345678
+DISCORD_CLIENT_SECRET=your-client-secret
+```
+
+## Save Options
+
+When saving credentials, you can choose from four options:
+
+### `.env` File
+
+Saves credentials to a `.env` file in the current directory.
+
+```bash
+GOOGLE_CLIENT_ID=your-id
+GOOGLE_CLIENT_SECRET=your-secret
+```
+
+### `.env.local` File
+
+Saves credentials to a `.env.local` file (commonly used in Next.js and other frameworks).
+
+```bash
+GOOGLE_CLIENT_ID=your-id
+GOOGLE_CLIENT_SECRET=your-secret
+```
+
+### JSON File
+
+Saves credentials as a JSON file named `{provider}-credentials.json`:
+
+```json
+{
+  "clientId": "your-id",
+  "clientSecret": "your-secret"
+}
+```
+
+### Print to Console
+
+Displays credentials in the terminal without saving to a file.
+
+## Callback URL Patterns
+
+OAuth Init automatically detects your auth library and suggests appropriate callback URLs:
+
+| Auth Library | Callback Pattern |
+|--------------|------------------|
+| next-auth | `/api/auth/callback/[provider]` |
+| @auth/core | `/api/auth/callback/[provider]` |
+| better-auth | `/api/auth/callback/[provider]` |
+| lucia | `/auth/callback` |
+| arctic | `/auth/callback/[provider]` |
+| iron-session | `/api/auth/callback` |
+| Generic | `/oauth/callback/[provider]` |
+
+The default base URL is `http://localhost:3000`, but you can customize this during setup.
+
+## Project Detection
+
+OAuth Init automatically detects your auth library by reading `package.json` in the current directory. If no known library is found, it uses a generic callback pattern.

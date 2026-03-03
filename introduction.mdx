@@ -1,0 +1,158 @@
+---
+title: Introduction to OAuth Init
+description: A CLI tool that simplifies OAuth provider setup by guiding you through the entire configuration process interactively
+---
+
+<img width="474" height="110" alt="OAuth Init Logo" src="https://github.com/user-attachments/assets/57dc1bf8-19b5-45ba-b7fd-d4fb6dd111d3" />
+
+## What is OAuth Init?
+
+OAuth Init is an interactive CLI tool that eliminates the pain of setting up OAuth providers for your web applications. Instead of manually navigating through multiple console pages, copying IDs, and managing credentials across different platforms, OAuth Init walks you through the entire process step-by-step.
+
+The CLI automatically detects your authentication library (next-auth, better-auth, lucia, arctic, etc.), suggests the correct callback URLs, opens the right console pages, validates your inputs, and saves credentials wherever you need them.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Smart Detection" icon="wand-magic-sparkles">
+    Automatically detects your auth library and suggests appropriate callback URLs for next-auth, better-auth, lucia, arctic, and more
+  </Card>
+  
+  <Card title="Interactive Setup" icon="terminal">
+    Beautiful CLI interface powered by @clack/prompts guides you through each step with clear instructions and validation
+  </Card>
+  
+  <Card title="Multiple Providers" icon="users">
+    Support for Google OAuth 2.0, GitHub Apps, GitHub OAuth Apps, and Discord OAuth with more providers coming soon
+  </Card>
+  
+  <Card title="Flexible Output" icon="floppy-disk">
+    Save credentials to .env, .env.local, JSON files, or print directly to console - your choice
+  </Card>
+  
+  <Card title="GCP Integration" icon="cloud">
+    Seamlessly integrates with gcloud CLI to fetch your Google Cloud projects and streamline OAuth setup
+  </Card>
+  
+  <Card title="CI/CD Ready" icon="robot">
+    Non-interactive mode with --no-open flag for automated environments and CI pipelines
+  </Card>
+</CardGroup>
+
+## Supported OAuth Providers
+
+<CardGroup cols={3}>
+  <Card title="Google OAuth 2.0" icon="google">
+    Full integration with Google Cloud Console including project selection and consent screen setup
+  </Card>
+  
+  <Card title="GitHub Apps" icon="github">
+    One-click GitHub App creation using manifest flow with automatic credential exchange
+  </Card>
+  
+  <Card title="GitHub OAuth Apps" icon="github">
+    Traditional OAuth App setup with guided form completion
+  </Card>
+  
+  <Card title="Discord OAuth" icon="discord">
+    Discord Developer Portal integration with application creation and redirect configuration
+  </Card>
+</CardGroup>
+
+## Supported Auth Libraries
+
+OAuth Init automatically detects and configures callback URLs for popular authentication libraries:
+
+- **next-auth** - `/api/auth/callback/[provider]`
+- **@auth/core** - `/api/auth/callback/[provider]`
+- **better-auth** - `/api/auth/callback/[provider]`
+- **lucia** - `/auth/callback`
+- **arctic** - `/auth/callback/[provider]`
+- **iron-session** - `/api/auth/callback`
+
+<Note>
+If no auth library is detected, OAuth Init uses a generic callback pattern: `/oauth/callback/[provider]`
+</Note>
+
+## How It Works
+
+The CLI orchestrates OAuth setup through a carefully designed workflow:
+
+<Steps>
+  <Step title="Discovery">
+    Detects your project's authentication library from package.json and determines the appropriate callback URL pattern
+  </Step>
+  
+  <Step title="Provider Selection">
+    Presents an interactive multi-select menu to choose which OAuth providers you want to configure
+  </Step>
+  
+  <Step title="Guided Setup">
+    For each provider, opens the correct console pages and provides step-by-step instructions with validation
+  </Step>
+  
+  <Step title="Credential Capture">
+    Collects client IDs and secrets with format validation to ensure correct configuration
+  </Step>
+  
+  <Step title="Save">
+    Writes credentials to your chosen format (.env, .env.local, JSON, or console output)
+  </Step>
+</Steps>
+
+## Quick Example
+
+Here's what the OAuth Init CLI looks like in action:
+
+```bash
+$ oauth-init
+
+  ▗▄▖  ▗▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▖    ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖
+ ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌  █  ▐▌ ▐▌      █  ▐▛▚▖▐▌  █    █
+ ▐▌ ▐▌▐▛▀▜▌▐▌ ▐▌  █  ▐▛▀▜▌      █  ▐▌ ▝▜▌  █    █
+ ▝▚▄▞▘▐▌ ▐▌▝▚▄▞▘  █  ▐▌ ▐▌    ▗▄█▄▖▐▌  ▐▌▗▄█▄▖  █ 
+
+◆  Enter the name of your project:
+│  my-awesome-app
+│
+◇  Detected auth library: next-auth
+│
+◆  Select OAuth services to setup:
+│  ◻ Google
+│  ◼ Github
+│  ◻ Discord
+│
+◇  GitHub OAuth Setup
+│
+◆  What type of GitHub app you want to create?
+│  ● GitHub App (One click setup)
+│  ○ OAuth App (You need to fill a form for this)
+│
+◇  Opening GitHub with your manifest...
+│
+◇  Credentials received!
+│
+◆  Where do you want to save the credentials?
+│  ● .env
+│  ○ .env.local
+│  ○ .json
+│  ○ print to the console
+│
+◇  Credentials saved to .env
+│
+└  OAuth setup completed! Thank you for using oauth-init!
+```
+
+## Get Started
+
+Ready to simplify your OAuth setup? Head over to the [Installation](/installation) guide to get started, or jump straight to the [Quickstart](/quickstart) tutorial to configure your first provider.
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Install OAuth Init globally via npm, bun, or pnpm
+  </Card>
+  
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Follow a step-by-step tutorial to set up your first OAuth provider
+  </Card>
+</CardGroup>

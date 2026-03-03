@@ -1,0 +1,195 @@
+---
+title: Discord OAuth Setup
+description: Configure Discord OAuth application for user authentication
+---
+
+Discord OAuth setup guides you through creating a Discord application and configuring OAuth2 credentials.
+
+## Prerequisites
+
+You need a Discord account to create applications in the [Discord Developer Portal](https://discord.com/developers/applications).
+
+## Setup Process
+
+<Steps>
+  <Step title="Create Discord Application">
+    OAuth Init opens the Discord Developer Portal with the new application dialog:
+
+    ```
+    https://discord.com/developers/applications?new_app=true
+    ```
+
+    <Note>
+      If the dialog doesn't appear automatically, click the **New Application** button in the top-right corner.
+    </Note>
+
+    Enter a name for your application and click **Create**.
+  </Step>
+
+  <Step title="Configure OAuth2 Settings">
+    After creating the application:
+
+    1. Navigate to **OAuth2** → **General** in the left sidebar
+    2. Scroll to the **Redirects** section
+    3. Click **Add Redirect**
+    4. Paste your callback URL (provided by OAuth Init)
+    5. Click **Save Changes**
+
+    <Warning>
+      Make sure to save your redirect URL before proceeding, or the OAuth flow will fail.
+    </Warning>
+  </Step>
+
+  <Step title="Get Client Secret">
+    If you don't already have a Client Secret visible:
+
+    1. In the **OAuth2** → **General** page
+    2. Click **Reset Secret**
+    3. Confirm the reset
+    4. Copy the new Client Secret immediately (it won't be shown again)
+
+    The Client ID is always visible on this page.
+  </Step>
+
+  <Step title="Enter Credentials">
+    Return to the CLI and paste your credentials when prompted:
+
+    **Client ID:**
+    ```
+    123456789012345678
+    ```
+
+    **Client Secret:**
+    ```
+    abcdefghijklmnopqrstuvwxyz123456
+    ```
+
+    <Note>
+      Discord Client IDs are 17-19 digit numeric strings (snowflake IDs).
+    </Note>
+  </Step>
+
+  <Step title="Save Credentials">
+    Choose where to save your credentials:
+    - **Environment variables** - Creates/updates `.env` file
+    - **Copy to clipboard** - Copies as `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET`
+    - **Display in terminal** - Shows credentials in the console
+  </Step>
+</Steps>
+
+## Validation Rules
+
+OAuth Init validates Discord credentials with these rules:
+
+### Client ID Validation
+```typescript
+validate: (value) =>
+  !value || !/^\d{17,19}$/.test(value) 
+    ? "Invalid Discord ID" 
+    : undefined
+```
+
+The Client ID must:
+- Be 17-19 digits long
+- Contain only numbers
+- Match Discord's snowflake ID format
+
+### Client Secret Validation
+```typescript
+validate: (value) =>
+  !value || value.length < 10 
+    ? "Secret too short" 
+    : undefined
+```
+
+The Client Secret must:
+- Be at least 10 characters long
+- Not be empty
+
+## Discord Application Settings
+
+After OAuth setup, you may want to configure additional settings in the Discord Developer Portal:
+
+### OAuth2 Scopes
+
+Common scopes for user authentication:
+- `identify` - Read user profile data
+- `email` - Access user email address
+- `guilds` - Read user's server list
+- `guilds.join` - Add users to your server
+
+### Bot Settings
+
+If your application also includes a bot:
+1. Go to **Bot** section in the sidebar
+2. Configure bot permissions and settings
+3. Note that OAuth credentials are separate from bot tokens
+
+## Example Usage
+
+Basic setup:
+```bash
+oauth-init discord
+```
+
+With callback URL:
+```bash
+oauth-init discord --callback https://example.com/auth/discord/callback
+```
+
+Skip browser opening:
+```bash
+oauth-init discord --no-open
+```
+
+Quiet mode:
+```bash
+oauth-init discord --quiet
+```
+
+## Common Issues
+
+### Invalid Client ID Format
+
+If you see "Invalid Discord ID", ensure:
+- You're copying the Client ID, not the Application ID (they're usually the same)
+- The ID contains only numbers
+- The ID is 17-19 digits long
+
+### Secret Too Short
+
+If you see "Secret too short":
+- Make sure you clicked **Reset Secret** to generate a new one
+- Copy the entire secret string without truncation
+- Secrets are typically 32 characters long
+
+### Redirect URI Mismatch
+
+During OAuth flow, if users see "redirect_uri" errors:
+- Verify the redirect URL in Discord matches exactly (including protocol and trailing slashes)
+- Check that you saved changes after adding the redirect in Discord
+- Ensure there are no typos in the URL
+
+## Using Discord OAuth
+
+After setup, implement the OAuth flow in your application:
+
+```javascript
+// Example authorization URL
+const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify email`;
+
+// Exchange code for access token
+const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    grant_type: 'authorization_code',
+    code: code,
+    redirect_uri: REDIRECT_URI
+  })
+});
+```
+
+See the [Discord OAuth2 documentation](https://discord.com/developers/docs/topics/oauth2) for complete implementation details.

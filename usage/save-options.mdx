@@ -1,0 +1,196 @@
+---
+title: Credential Save Options
+description: Different ways to save OAuth credentials after setup
+---
+
+After completing the OAuth setup for each provider, OAuth Init offers multiple options for saving your credentials. Choose the format that best fits your project structure and workflow.
+
+## Available Save Options
+
+OAuth Init supports four different save formats:
+
+<Tabs>
+  <Tab title=".env">
+    Save credentials to a `.env` file in your project root.
+
+    **File:** `.env`
+
+    ```bash
+    GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+    GOOGLE_CLIENT_SECRET=your-client-secret
+    ```
+
+    **When to use:**
+    - Standard Node.js projects
+    - Projects using `dotenv` package
+    - When you want a single environment file
+
+    **Behavior:**
+    - If `.env` exists, OAuth Init will prompt to append credentials
+    - If `.env` doesn't exist, it will be created
+    - Credentials are appended with a newline separator
+  </Tab>
+
+  <Tab title=".env.local">
+    Save credentials to a `.env.local` file in your project root.
+
+    **File:** `.env.local`
+
+    ```bash
+    GITHUB_CLIENT_ID=Iv1.a1b2c3d4e5f6g7h8
+    GITHUB_CLIENT_SECRET=1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t
+    ```
+
+    **When to use:**
+    - Next.js projects (automatically loaded)
+    - Local development overrides
+    - When you want to separate local config from committed `.env`
+
+    **Behavior:**
+    - If `.env.local` exists, OAuth Init will prompt to append credentials
+    - If `.env.local` doesn't exist, it will be created
+    - Credentials are appended with a newline separator
+
+    <Note>
+    `.env.local` is typically gitignored by default in Next.js projects, making it ideal for local development secrets.
+    </Note>
+  </Tab>
+
+  <Tab title="JSON">
+    Save credentials to a JSON file named `{provider}-credentials.json`.
+
+    **File:** `google-credentials.json`
+
+    ```json
+    {
+      "clientId": "your-client-id.apps.googleusercontent.com",
+      "clientSecret": "your-client-secret"
+    }
+    ```
+
+    **When to use:**
+    - Custom configuration management systems
+    - Projects that prefer structured JSON config
+    - When you need to programmatically parse credentials
+    - Microservices with service-specific config files
+
+    **Behavior:**
+    - Creates a separate JSON file for each provider
+    - File is named `{provider}-credentials.json` (e.g., `google-credentials.json`, `github-credentials.json`)
+    - Overwrites the file if it already exists
+    - Formatted with 2-space indentation
+  </Tab>
+
+  <Tab title="Print to Console">
+    Display credentials in the console without saving to any file.
+
+    **Console output:**
+
+    ```bash
+    DISCORD_CLIENT_ID=1234567890123456789
+    DISCORD_CLIENT_SECRET=abcdefghijklmnopqrstuvwxyz123456
+    Credentials printed to console
+    ```
+
+    **When to use:**
+    - CI/CD environments
+    - When manually managing secrets
+    - Docker/Kubernetes deployments with secret management
+    - Cloud platforms with environment variable configuration
+    - When you want to copy credentials to a different location
+
+    **Behavior:**
+    - Prints credentials in environment variable format
+    - No files are created or modified
+    - Credentials remain in terminal history
+  </Tab>
+</Tabs>
+
+## Credential Format
+
+Regardless of the save option, credentials follow a consistent naming pattern:
+
+```bash
+{PROVIDER}_CLIENT_ID=<value>
+{PROVIDER}_CLIENT_SECRET=<value>
+```
+
+Where `{PROVIDER}` is the uppercase provider name:
+- Google: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- GitHub: `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- Discord: `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`
+
+## Appending to Existing Files
+
+When saving to `.env` or `.env.local`, OAuth Init checks if the file already exists:
+
+```bash
+.env already exists. Append credentials? (Y/n)
+```
+
+If you choose to append:
+- New credentials are added with a newline separator
+- Existing content is preserved
+- No duplicate checking is performed
+
+If you decline:
+- Credentials are not saved
+- You'll see: "Credentials not saved."
+
+## Multiple Providers
+
+When setting up multiple OAuth providers, you can choose different save options for each:
+
+**Example workflow:**
+```bash
+# Google setup
+Credentials saved to .env
+
+# GitHub setup
+Credentials saved to .env
+
+# Discord setup
+Discord credentials printed to console
+```
+
+All providers can append to the same `.env` or `.env.local` file:
+
+```bash
+GOOGLE_CLIENT_ID=google-client-id
+GOOGLE_CLIENT_SECRET=google-secret
+GITHUB_CLIENT_ID=github-client-id
+GITHUB_CLIENT_SECRET=github-secret
+DISCORD_CLIENT_ID=discord-client-id
+DISCORD_CLIENT_SECRET=discord-secret
+```
+
+## Security Best Practices
+
+<Warning>
+Always add credential files to `.gitignore` to prevent accidentally committing secrets to version control.
+</Warning>
+
+**Recommended `.gitignore` entries:**
+```bash
+.env
+.env.local
+*-credentials.json
+```
+
+**Additional recommendations:**
+- Use `.env.local` for local development in Next.js projects
+- Use environment variable management systems in production
+- Rotate credentials if they're accidentally exposed
+- Never commit `.env` files with real credentials
+
+## Choosing the Right Option
+
+| Scenario | Recommended Option |
+|----------|--------------------|
+| Next.js local development | `.env.local` |
+| Standard Node.js project | `.env` |
+| Custom config system | `JSON` |
+| CI/CD pipeline | `Print to console` |
+| Docker/Kubernetes | `Print to console` |
+| Cloud platform deployment | `Print to console` |
+| Multiple environments | `.env.local` for local, print for others |

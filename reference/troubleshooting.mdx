@@ -1,0 +1,253 @@
+---
+title: Troubleshooting
+description: Common issues and solutions when using OAuth Init CLI
+---
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="gcloud CLI not found">
+    **Error Message:**
+    ```
+    gcloud CLI not found.
+    gcloud CLI is required for Google OAuth setup.
+    Install it: https://cloud.google.com/sdk/docs/install
+    Then run: gcloud auth login
+    ```
+
+    **Cause:**
+    The Google Cloud SDK (gcloud CLI) is not installed on your system or not in your PATH.
+
+    **Solution:**
+    1. Install the gcloud CLI from [Google Cloud SDK documentation](https://cloud.google.com/sdk/docs/install)
+    2. After installation, authenticate:
+       ```bash
+       gcloud auth login
+       ```
+    3. Verify installation:
+       ```bash
+       gcloud version
+       ```
+    4. Run `oauth-init` again
+  </Accordion>
+
+  <Accordion title="Not authenticated with gcloud">
+    **Error Message:**
+    ```
+    Not authenticated.
+    Please run: gcloud auth login
+    ```
+
+    **Cause:**
+    The gcloud CLI is installed but you're not authenticated with a Google account.
+
+    **Solution:**
+    1. Authenticate with gcloud:
+       ```bash
+       gcloud auth login
+       ```
+    2. Follow the browser prompts to complete authentication
+    3. Verify authentication:
+       ```bash
+       gcloud auth list
+       ```
+    4. Run `oauth-init` again
+  </Accordion>
+
+  <Accordion title="No Google Cloud projects found">
+    **Error Message:**
+    ```
+    No Google Cloud projects found. Create one at https://console.cloud.google.com
+    ```
+
+    **Cause:**
+    Your authenticated Google account has no Google Cloud projects.
+
+    **Solution:**
+    1. Visit [Google Cloud Console](https://console.cloud.google.com)
+    2. Click "Create Project"
+    3. Enter a project name and click "Create"
+    4. Wait for the project to be created
+    5. Run `oauth-init` again
+  </Accordion>
+
+  <Accordion title="Invalid Google Client ID format">
+    **Error Message:**
+    ```
+    Invalid format
+    ```
+
+    **Cause:**
+    The Client ID you entered doesn't match the expected format for Google OAuth.
+
+    **Solution:**
+    Google Client IDs should end with `.apps.googleusercontent.com`. Example:
+    ```
+    123456789-abcdefgh.apps.googleusercontent.com
+    ```
+
+    Make sure you:
+    1. Copied the entire Client ID from the Google Cloud Console
+    2. Didn't include any extra spaces or characters
+    3. Used the Client ID from an OAuth 2.0 Client (not an API key)
+  </Accordion>
+
+  <Accordion title="Invalid Discord Client ID">
+    **Error Message:**
+    ```
+    Invalid Discord ID
+    ```
+
+    **Cause:**
+    The Discord Client ID must be a 17-19 digit number.
+
+    **Solution:**
+    Discord Client IDs are numeric snowflake IDs. Example:
+    ```
+    123456789012345678
+    ```
+
+    Make sure you:
+    1. Go to Discord Developer Portal > Your App > OAuth2 > General
+    2. Copy the "Client ID" (not the Client Secret)
+    3. Paste only the numeric ID without any spaces
+  </Accordion>
+
+  <Accordion title="Discord Client Secret too short">
+    **Error Message:**
+    ```
+    Secret too short
+    ```
+
+    **Cause:**
+    The Discord Client Secret must be at least 10 characters long.
+
+    **Solution:**
+    1. Go to Discord Developer Portal > Your App > OAuth2 > General
+    2. Click "Reset Secret" if you don't have a valid secret
+    3. Copy the newly generated secret immediately (it's only shown once)
+    4. Make sure you copy the entire secret string
+  </Accordion>
+
+  <Accordion title="GitHub manifest conversion failed">
+    **Error Message:**
+    ```
+    Failed to convert manifest code.
+    ```
+
+    **Cause:**
+    The GitHub App one-click setup failed to exchange the manifest code for credentials.
+
+    **Solution:**
+    This can happen due to network issues or GitHub API problems. Try:
+    1. Run `oauth-init` again
+    2. If it persists, choose "OAuth App" instead of "GitHub App" during setup
+    3. Check your internet connection
+    4. Verify you're not behind a proxy that blocks GitHub API requests
+  </Accordion>
+
+  <Accordion title="Browser doesn't open automatically">
+    **Cause:**
+    You might be in an SSH session, headless environment, or the `open` command isn't working.
+
+    **Solution:**
+    Use the `--no-open` flag to prevent automatic browser opening:
+    ```bash
+    oauth-init --no-open
+    ```
+
+    The CLI will display URLs that you can manually copy and paste into your browser.
+  </Accordion>
+
+  <Accordion title="File permission errors when saving credentials">
+    **Cause:**
+    The CLI doesn't have write permissions in the current directory.
+
+    **Solution:**
+    1. Check your current directory permissions:
+       ```bash
+       ls -la
+       ```
+    2. Make sure you have write access to the directory
+    3. If needed, change to a directory where you have write permissions
+    4. Alternatively, choose "Print to console" when asked about save options
+  </Accordion>
+
+  <Accordion title="Existing .env file - should I append?">
+    **Prompt:**
+    ```
+    .env already exists. Append credentials?
+    ```
+
+    **Solution:**
+    - Choose **Yes** to append the new credentials to your existing `.env` file
+    - Choose **No** if you want to manually handle the credentials
+    - Consider using `.env.local` if you're working with a framework like Next.js to avoid committing secrets
+  </Accordion>
+
+  <Accordion title="Setup aborted / Operation cancelled">
+    **Cause:**
+    You pressed Ctrl+C or selected "Cancel" during the interactive prompts.
+
+    **Solution:**
+    Simply run `oauth-init` again when you're ready to continue.
+  </Accordion>
+</AccordionGroup>
+
+## General Debugging Tips
+
+### Enable Verbose Output
+
+By default, OAuth Init provides detailed output. If you're using `--quiet` mode and encountering issues, remove the flag:
+
+```bash
+oauth-init
+```
+
+### Check Dependencies
+
+For Google OAuth, ensure gcloud is installed:
+```bash
+which gcloud
+gcloud version
+```
+
+For GitHub App setup, ensure curl is available:
+```bash
+which curl
+```
+
+### Verify Package.json
+
+If callback URL detection isn't working correctly, check that your auth library is listed in `package.json`:
+
+```bash
+cat package.json | grep -E "next-auth|better-auth|lucia|arctic"
+```
+
+### Test Network Connectivity
+
+Some providers require outbound connections:
+
+```bash
+# Test Google Cloud API
+curl -I https://cloud.google.com
+
+# Test GitHub API
+curl -I https://api.github.com
+
+# Test Discord API
+curl -I https://discord.com
+```
+
+## Getting Help
+
+If you're still experiencing issues:
+
+1. Run with verbose output (without `--quiet`)
+2. Check the error message carefully
+3. Refer to provider-specific setup guides:
+   - [Google Setup](/providers/google)
+   - [GitHub Setup](/providers/github)
+   - [Discord Setup](/providers/discord)
+4. Report issues on the [GitHub repository](https://github.com/anomalyco/oauth-init)

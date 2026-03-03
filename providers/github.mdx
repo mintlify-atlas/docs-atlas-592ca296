@@ -1,0 +1,165 @@
+---
+title: GitHub OAuth Setup
+description: Configure GitHub OAuth with either GitHub App (one-click) or OAuth App (manual) options
+---
+
+GitHub OAuth setup offers two approaches: GitHub App with automated setup, or traditional OAuth App with manual configuration.
+
+## Setup Options
+
+When you run `oauth-init github`, you'll choose between:
+
+- **GitHub App (One click setup)** - Automated setup using GitHub's app manifest flow
+- **OAuth App (Manual setup)** - Traditional OAuth app requiring form completion
+
+## GitHub App (Recommended)
+
+The GitHub App flow uses GitHub's app manifest API for automated credential generation.
+
+<Steps>
+  <Step title="Choose GitHub App">
+    Select "GitHub App (One click setup)" from the menu.
+  </Step>
+
+  <Step title="Choose Save Option">
+    Select where to save credentials before the app is created:
+    - Environment variables (`.env` file)
+    - Copy to clipboard
+    - Display in terminal
+  </Step>
+
+  <Step title="Authorize in Browser">
+    OAuth Init starts a local server on port `3004` and opens your browser to GitHub.
+
+    A form is automatically submitted with this manifest:
+    ```json
+    {
+      "name": "oauth-init-app",
+      "url": "http://localhost:3000",
+      "callback_url": "YOUR_CALLBACK_URL",
+      "public": false,
+      "default_permissions": {
+        "contents": "read",
+        "metadata": "read"
+      },
+      "redirect_url": "http://localhost:3004/callback"
+    }
+    ```
+
+    GitHub will prompt you to authorize the app creation.
+  </Step>
+
+  <Step title="Automatic Credential Exchange">
+    After authorization, GitHub redirects to the local server with a code.
+
+    OAuth Init exchanges this code for your Client ID and Client Secret:
+    ```bash
+    curl -X POST https://api.github.com/app-manifests/{code}/conversions
+    ```
+
+    The credentials are automatically saved according to your chosen option.
+  </Step>
+</Steps>
+
+### How It Works
+
+The GitHub App flow:
+1. Creates a local HTTP server on `http://localhost:3004`
+2. Opens browser to `/callback` which auto-submits a form to GitHub
+3. GitHub creates the app and redirects back with a temporary code
+4. The code is exchanged for permanent credentials via GitHub's API
+5. Credentials are saved and the server shuts down
+
+## OAuth App (Manual)
+
+The OAuth App flow requires manual form completion in GitHub's developer settings.
+
+<Steps>
+  <Step title="Choose OAuth App">
+    Select "OAuth App (You need to fill a form for this)" from the menu.
+  </Step>
+
+  <Step title="Create OAuth App">
+    OAuth Init opens the GitHub OAuth app registration page:
+
+    ```
+    https://github.com/settings/applications/new
+    ```
+
+    Complete the form:
+    1. **Application name** - Choose any name for your app
+    2. **Homepage URL** - Your application's homepage (e.g., `http://localhost:3000`)
+    3. **Authorization callback URL** - The callback URL provided by OAuth Init
+    4. Click **Register application**
+
+    Press Enter in the CLI once you've created the OAuth App.
+  </Step>
+
+  <Step title="Get Client Credentials">
+    After creating the app, you'll see your Client ID immediately.
+
+    To get the Client Secret:
+    1. Click **Generate a new client secret**
+    2. Copy the secret (it will only be shown once)
+  </Step>
+
+  <Step title="Enter Credentials">
+    Paste your credentials when prompted:
+
+    **Client ID:**
+    ```
+    Iv1.1234567890abcdef
+    ```
+
+    **Client Secret:**
+    ```
+    1234567890abcdef1234567890abcdef12345678
+    ```
+  </Step>
+
+  <Step title="Save Credentials">
+    Choose where to save your credentials:
+    - **Environment variables** - Creates/updates `.env` file
+    - **Copy to clipboard** - Copies as `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
+    - **Display in terminal** - Shows credentials in the console
+  </Step>
+</Steps>
+
+## Validation
+
+Unlike other providers, GitHub OAuth App setup does not enforce strict validation on the Client ID format. However, GitHub Client IDs typically:
+
+- **OAuth Apps**: Start with `Iv1.` followed by 16 hexadecimal characters
+- **GitHub Apps**: Use numeric Client IDs
+
+## Example Usage
+
+Basic setup:
+```bash
+oauth-init github
+```
+
+With callback URL:
+```bash
+oauth-init github --callback http://localhost:3000/auth/callback
+```
+
+Skip browser opening:
+```bash
+oauth-init github --no-open
+```
+
+Quiet mode:
+```bash
+oauth-init github --quiet
+```
+
+## Comparison
+
+| Feature | GitHub App | OAuth App |
+|---------|-----------|----------|
+| Setup Speed | Fast (one-click) | Slower (manual form) |
+| Automation | Fully automated | Manual credential copy |
+| Permissions | Preset (contents, metadata) | Configured in GitHub |
+| Local Server | Required (port 3004) | Not required |
+| Best For | Quick setup, development | Production, custom permissions |
