@@ -1,0 +1,62 @@
+{
+  "projectType": "cli-tool",
+  "projectName": "OAuth Init",
+  "projectDescription": "Interactive CLI for streamlining OAuth provider setup across Google, GitHub, and Discord.",
+  "theme": "palm",
+  "primaryColor": "#4285F4",
+  "lightColor": "#5A9FFF",
+  "darkColor": "#1E3A8A",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Providers",
+        "pages": [
+          "providers/google",
+          "providers/github",
+          "providers/discord"
+        ]
+      },
+      {
+        "group": "Usage",
+        "pages": [
+          "usage/cli-options",
+          "usage/auth-libraries",
+          "usage/save-options"
+        ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "reference/configuration",
+          "reference/troubleshooting"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Interactive OAuth setup with guided prompts",
+    "Google Cloud project detection via gcloud CLI",
+    "GitHub App one-click setup with manifest flow",
+    "Discord OAuth application configuration",
+    "Auto-detection of auth libraries (next-auth, better-auth, lucia, etc.)",
+    "Flexible credential storage (.env, .env.local, JSON, console)",
+    "Non-interactive mode for CI/automation"
+  ],
+  "publicApiSurface": [
+    "oauth-init (main CLI command)",
+    "--help, -h (show help)",
+    "--quiet, -q (reduce verbosity)",
+    "--no-open, -n (disable browser opening)",
+    "GoogleAuthProvider",
+    "GitHubAuthProvider",
+    "DiscordAuthProvider"
+  ]
+}
